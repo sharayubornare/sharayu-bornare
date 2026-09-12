@@ -1,0 +1,24 @@
+name: Verify Portfolio
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify project files
+        run: |
+          echo "Repository checked out successfully"
+          echo "Project structure:"
+          ls -la
+          echo "Web directory:"
+          ls -la web
+          echo "Dockerfile:"
+          cat web/Dockerfile

@@ -39,12 +39,23 @@ resource "aws_instance" "web" {
 
   user_data = <<-EOF
     #!/bin/bash
+    set -eux
+
     apt-get update -y
-    apt-get install -y docker.io
+    apt-get install -y docker.io git
+
     systemctl enable docker
     systemctl start docker
+
     usermod -aG docker ubuntu
-    docker run -d --name devops-nginx -p 80:80 nginx:alpine
+
+    git clone https://github.com/sharayubornare/sharayu-bornare.git /opt/sharayu-bornare
+
+    cd /opt/sharayu-bornare/web
+
+    docker build -t sharayu-aws-devops-portfolio:1.0 .
+
+    docker run -d --name sharayu-portfolio -p 80:80 sharayu-aws-devops-portfolio:1.0
   EOF
 
   tags = {
