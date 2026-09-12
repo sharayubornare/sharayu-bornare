@@ -1,0 +1,20 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# AWS credentials / private keys
+*.pem
+*.key
+
+# Docker image archives
+*.tar
+
+# Backup files
+*.backup
+
+# OS / editor files
+.DS_Store
+Thumbs.db
