@@ -1,4 +1,4 @@
-name: Verify Portfolio
+name: Deploy Portfolio
 
 on:
   push:
@@ -6,19 +6,31 @@ on:
       - main
 
 jobs:
-  verify:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify project files
-        run: |
-          echo "Repository checked out successfully"
-          echo "Project structure:"
-          ls -la
-          echo "Web directory:"
-          ls -la web
-          echo "Dockerfile:"
-          cat web/Dockerfile
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /opt/sharayu-bornare
+            git pull origin main
+
+            cd web
+
+            sudo docker stop sharayu-portfolio || true
+            sudo docker rm sharayu-portfolio || true
+
+            sudo docker build -t sharayu-aws-devops-portfolio:1.0 .
+            sudo docker run -d --name sharayu-portfolio -p 80:80 sharayu-aws-devops-portfolio:1.0
+
+            sudo docker ps
+            curl -I http://localhost
